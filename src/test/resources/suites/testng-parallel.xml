@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<!--
+  Suite que corre os MESMOS testes em Android e iOS EM PARALELO.
+
+  parallel="tests" + thread-count="2"  -> cada <test> corre na sua thread.
+  E aqui que o DriverManager com ThreadLocal e indispensavel: sem ele, as
+  duas sessoes colidiriam. Cada dispositivo precisa do seu servidor Appium
+  (ou um Selenium/Appium Grid) a escutar no URL configurado.
+
+  Executar:  mvn test -Dsuite=testng-parallel.xml
+-->
+<suite name="Suite Paralela Cross-Platform" parallel="tests" thread-count="2" verbose="1">
+
+    <listeners>
+        <listener class-name="com.blog.appium.listeners.TestListener"/>
+    </listeners>
+
+    <test name="Android">
+        <parameter name="platform" value="android"/>
+        <classes>
+            <class name="com.blog.appium.tests.LoginTest"/>
+            <class name="com.blog.appium.tests.HomeTest"/>
+        </classes>
+    </test>
+
+    <test name="iOS">
+        <parameter name="platform" value="ios"/>
+        <classes>
+            <class name="com.blog.appium.tests.LoginTest"/>
+            <class name="com.blog.appium.tests.HomeTest"/>
+        </classes>
+    </test>
+</suite>
