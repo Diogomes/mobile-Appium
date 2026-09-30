@@ -4,6 +4,10 @@ Framework de automação de testes mobile construído com **Java + Appium + Test
 
 > Este repositório serve de base para automação real com Appium e de material de apoio ao artigo do blog. Cada classe está comentada a explicar *o quê* e, sobretudo, *porquê*.
 
+### 📚 Documentação
+- **[docs/CENARIOS.md](docs/CENARIOS.md)** — cada cenário de teste, as funções usadas e o porquê.
+- **[docs/HIERARQUIA-E-BOAS-PRATICAS.md](docs/HIERARQUIA-E-BOAS-PRATICAS.md)** — como funciona a hierarquia do projeto do ponto de vista de boas práticas.
+
 ---
 
 ## 📐 Arquitetura em camadas
@@ -129,6 +133,9 @@ Verificação útil: `appium driver doctor uiautomator2`
    mvn test -Dsuite=testng-ios.xml
    mvn test -Dsuite=testng-parallel.xml
 
+   # Cenários complexos (data-driven + compra ponta-a-ponta)
+   mvn test -Dsuite=testng-e2e.xml -Dplatform=android
+
    # Sobrepor configuração sem editar ficheiros
    mvn test -Dplatform=android -Ddevice.name="Pixel_7" -DnoReset=true
    ```
@@ -137,6 +144,20 @@ Verificação útil: `appium driver doctor uiautomator2`
    ```bash
    mvn allure:serve
    ```
+
+### 🎥 Capturar vídeo da execução
+
+O framework grava o ecrã automaticamente via API nativa do Appium (`startRecordingScreen`/`stopRecordingScreen`). Os `.mp4` ficam em `recordings/` e são anexados ao relatório Allure.
+
+```bash
+# Gravar e guardar vídeo só dos testes que falham (default)
+mvn test -Dsuite=testng-e2e.xml -Dvideo.enabled=true
+
+# Gravar e guardar vídeo de TODOS os testes (bom para demos/blog)
+mvn test -Dsuite=testng-e2e.xml -Dvideo.enabled=true -Dvideo.onlyOnFailure=false
+```
+
+> Requer um device/emulador + Appium reais a correr. A gravação é feita no próprio dispositivo, por isso não precisa de ferramentas extra no host.
 
 ---
 

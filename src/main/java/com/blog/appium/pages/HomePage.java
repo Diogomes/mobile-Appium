@@ -18,6 +18,10 @@ public class HomePage extends BasePage {
     @iOSXCUITFindBy(accessibility = "logout_button")
     private WebElement logoutButton;
 
+    @AndroidFindBy(accessibility = "open_products")
+    @iOSXCUITFindBy(accessibility = "open_products")
+    private WebElement openProductsButton;
+
     @Step("Verificar se o ecra inicial foi carregado")
     public boolean isLoaded() {
         return isDisplayed(welcomeMessage);
@@ -32,5 +36,11 @@ public class HomePage extends BasePage {
     public LoginPage logout() {
         click(logoutButton);
         return new LoginPage();
+    }
+
+    @Step("Abrir o catalogo de produtos")
+    public ProductsPage openProducts() {
+        click(openProductsButton);
+        return new ProductsPage();
     }
 }

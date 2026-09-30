@@ -70,4 +70,42 @@ public final class GestureUtils {
                 .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
         driver.perform(List.of(tap));
     }
+
+    /**
+     * Faz swipe para cima ate o elemento ficar visivel, ou ate atingir o
+     * numero maximo de tentativas.
+     *
+     * <p>Padrao essencial em listas longas (feeds, catalogos): o elemento
+     * pretendido pode nem existir na arvore de acessibilidade ate ser
+     * "scrollado" para o ecra. Devolvemos um boolean (em vez de lancar excecao)
+     * para o Page Object decidir o que fazer quando o item nao aparece.</p>
+     *
+     * <p><b>Nota de performance:</b> cada verificacao depende do tempo de espera
+     * configurado para localizar o elemento. Em produção, para Android, costuma
+     * compensar usar {@code UiScrollable.scrollIntoView(...)} (nativo e mais
+     * rapido); aqui usamos o swipe generico por ser identico em Android e iOS.</p>
+     *
+     * @param driver    driver da sessao
+     * @param element   elemento-alvo (proxy do PageFactory)
+     * @param maxSwipes numero maximo de swipes antes de desistir
+     * @return true se o elemento ficou visivel
+     */
+    public static boolean swipeUpUntilVisible(AppiumDriver driver, WebElement element, int maxSwipes) {
+        for (int attempt = 0; attempt < maxSwipes; attempt++) {
+            if (isVisibleQuietly(element)) {
+                return true;
+            }
+            swipeUp(driver);
+        }
+        return isVisibleQuietly(element);
+    }
+
+    /** Verifica visibilidade sem propagar excecao quando o elemento nao existe. */
+    private static boolean isVisibleQuietly(WebElement element) {
+        try {
+            return element.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

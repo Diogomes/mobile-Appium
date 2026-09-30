@@ -4,9 +4,11 @@ import com.blog.appium.config.ConfigManager;
 import com.blog.appium.driver.DriverFactory;
 import com.blog.appium.driver.DriverManager;
 import com.blog.appium.driver.Platform;
+import com.blog.appium.utils.VideoRecorder;
 import io.appium.java_client.AppiumDriver;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
@@ -33,6 +35,10 @@ public abstract class BaseTest {
 
     private static final Logger log = LogManager.getLogger(BaseTest.class);
 
+    // Controla a gravacao de video; lido da configuracao no setUp
+    private boolean videoEnabled;
+    private boolean videoOnlyOnFailure;
+
     @Parameters("platform")
     @BeforeMethod(alwaysRun = true)
     public void setUp(@Optional("android") String platformParam) {
@@ -42,10 +48,21 @@ public abstract class BaseTest {
         ConfigManager config = ConfigManager.forPlatform(platform);
         AppiumDriver driver = DriverFactory.create(config);
         DriverManager.setDriver(driver);
+
+        videoEnabled = config.getBoolean("video.enabled", false);
+        videoOnlyOnFailure = config.getBoolean("video.onlyOnFailure", true);
+        if (videoEnabled) {
+            VideoRecorder.start(driver);
+        }
     }
 
     @AfterMethod(alwaysRun = true)
-    public void tearDown() {
+    public void tearDown(ITestResult result) {
+        if (videoEnabled) {
+            boolean failed = result.getStatus() == ITestResult.FAILURE;
+            boolean keep = failed || !videoOnlyOnFailure;
+            VideoRecorder.stop(DriverManager.getDriver(), result.getName(), keep);
+        }
         log.info("===== A encerrar sessao =====");
         DriverManager.quitDriver();
     }

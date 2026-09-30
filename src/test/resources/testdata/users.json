@@ -1,0 +1,26 @@
+[
+  {
+    "username": "utilizador.valido",
+    "password": "Password123",
+    "shouldSucceed": true,
+    "expectedError": null
+  },
+  {
+    "username": "utilizador.invalido",
+    "password": "senha.errada",
+    "shouldSucceed": false,
+    "expectedError": "Credenciais invalidas"
+  },
+  {
+    "username": "utilizador.bloqueado",
+    "password": "Password123",
+    "shouldSucceed": false,
+    "expectedError": "Conta bloqueada"
+  },
+  {
+    "username": "",
+    "password": "",
+    "shouldSucceed": false,
+    "expectedError": "Preencha os campos obrigatorios"
+  }
+]
